@@ -2,11 +2,11 @@ import Link from "next/link";
 
 export function Footer() {
     return (
-        <footer className="border-t bg-muted/20">
+        <footer className="border-t border-border/70 bg-background/80">
             <div className="container mx-auto px-4 sm:px-8 py-12">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     <div className="space-y-4">
-                        <h3 className="text-lg font-bold text-primary">PanenHub</h3>
+                        <h3 className="font-display text-xl font-bold text-foreground">PanenHub</h3>
                         <p className="text-sm text-muted-foreground w-3/4">
                             Marketplace makanan UMKM terpercaya, menghubungkan penjual lokal dengan pembeli di seluruh Indonesia.
                         </p>
@@ -16,7 +16,7 @@ export function Footer() {
                         <ul className="space-y-2 text-sm text-muted-foreground">
                             <li><Link href="/" className="hover:text-primary transition-colors">Beranda</Link></li>
                             <li><Link href="/products" className="hover:text-primary transition-colors">Produk</Link></li>
-                            <li><Link href="/about" className="hover:text-primary transition-colors">Tentang Kami</Link></li>
+                            <li><Link href="/#about" className="hover:text-primary transition-colors">Tentang Kami</Link></li>
                         </ul>
                     </div>
                     <div>

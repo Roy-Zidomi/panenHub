@@ -1,10 +1,16 @@
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, Leaf, ShieldCheck, Truck } from "lucide-react";
+import { AboutSection } from "@/components/AboutSection";
+import { Badge } from "@/components/ui/badge";
+import { AddToCartButton } from "@/components/cart/add-to-cart-button";
+import { getBestSellingProducts } from "@/services/product.service";
 
-export default function Home() {
+export default async function Home() {
+  const bestSellingProducts = await getBestSellingProducts(4);
+
   return (
     <div className="flex flex-col gap-16 pb-16">
       {/* Hero Section */}
@@ -27,7 +33,7 @@ export default function Home() {
                     Belanja Sekarang <ArrowRight className="h-4 w-4" />
                   </Button>
                 </Link>
-                <Link href="/about">
+                <Link href="/#about">
                   <Button size="lg" variant="outline" className="w-full sm:w-auto">
                     Pelajari Lebih Lanjut
                   </Button>
@@ -36,15 +42,22 @@ export default function Home() {
             </div>
             <div className="relative hidden md:block">
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent rounded-full blur-3xl" />
-              <img
-                src="https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1000&auto=format&fit=crop"
-                alt="Fresh produce"
-                className="relative rounded-2xl shadow-2xl object-cover h-[500px] w-full"
-              />
+              <div className="relative h-[500px] w-full overflow-hidden rounded-2xl shadow-2xl">
+                <Image
+                  src="https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1000&auto=format&fit=crop"
+                  alt="Fresh produce"
+                  fill
+                  className="object-cover"
+                  sizes="(min-width: 768px) 50vw, 100vw"
+                  priority
+                />
+              </div>
             </div>
           </div>
         </div>
       </section>
+
+      <AboutSection />
 
       {/* Features Section */}
       <section className="container mx-auto px-4 sm:px-8">
@@ -115,19 +128,79 @@ export default function Home() {
         </Button>
       </section>
 
-      {/* Featured Products Placeholder */}
-      <section className="container mx-auto px-4 sm:px-8 text-center pt-8">
-        <h2 className="text-3xl font-bold tracking-tight mb-8 text-left">Produk Terlaris</h2>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* We will populate this from the database later or in the next task */}
-          {[1, 2, 3, 4].map(i => (
-            <div key={i} className="animate-pulse flex flex-col gap-4">
-              <div className="w-full h-48 bg-muted rounded-xl"></div>
-              <div className="h-4 bg-muted rounded w-3/4"></div>
-              <div className="h-4 bg-muted rounded w-1/2"></div>
-            </div>
-          ))}
+      <section className="container mx-auto px-4 sm:px-8 pt-8">
+        <div className="mb-8 flex items-end justify-between gap-4">
+          <div>
+            <h2 className="text-3xl font-bold tracking-tight">Produk Terlaris</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Rekomendasi produk dengan performa penjualan terbaik.
+            </p>
+          </div>
+          <Link href="/products" className="hidden sm:block">
+            <Button variant="outline" className="gap-2">
+              Lihat Semua <ArrowRight className="h-4 w-4" />
+            </Button>
+          </Link>
         </div>
+
+        {bestSellingProducts.length === 0 ? (
+          <div className="rounded-xl border border-dashed bg-muted/20 p-12 text-center">
+            <p className="font-medium">Belum ada data produk terlaris.</p>
+            <p className="text-sm text-muted-foreground">
+              Data akan muncul otomatis setelah ada transaksi selesai.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 md:gap-6">
+            {bestSellingProducts.map((product) => (
+              <Card
+                key={product.id}
+                className="group flex flex-col overflow-hidden border bg-card/80 shadow-sm transition-all duration-300 hover:scale-[1.01] hover:shadow-lg"
+              >
+                <Link href={`/products/${product.id}`} className="relative block aspect-square overflow-hidden bg-muted">
+                  {product.image ? (
+                    <Image
+                      src={product.image}
+                      alt={product.name}
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-secondary text-xs text-secondary-foreground">
+                      No Image
+                    </div>
+                  )}
+
+                  {product.quality === "Premium" && (
+                    <Badge className="absolute right-2 top-2 border-none bg-amber-500 shadow-sm hover:bg-amber-600">
+                      Premium
+                    </Badge>
+                  )}
+
+                  {product.soldCount > 0 && (
+                    <Badge variant="secondary" className="absolute left-2 top-2 border border-border/60 bg-background/85">
+                      Terjual {product.soldCount}
+                    </Badge>
+                  )}
+                </Link>
+
+                <CardContent className="flex-1 p-4">
+                  <div className="mb-1 text-xs text-muted-foreground">{product.category.name}</div>
+                  <Link href={`/products/${product.id}`} className="hover:underline">
+                    <h3 className="line-clamp-2 text-base font-semibold leading-tight">{product.name}</h3>
+                  </Link>
+                  <div className="mt-3 text-xl font-bold text-primary">
+                    Rp {new Intl.NumberFormat("id-ID").format(product.price)}
+                  </div>
+                </CardContent>
+
+                <div className="p-4 pt-0">
+                  <AddToCartButton product={product} />
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );

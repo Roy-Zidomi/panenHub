@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PanenHub App
 
-## Getting Started
+Marketplace UMKM dengan dua area utama:
+- Storefront untuk pengunjung (tanpa login).
+- Admin panel untuk pengelolaan data produk dan pesanan.
 
-First, run the development server:
+## Akses Login
+
+- User/pengunjung: tidak perlu login.
+- Admin: login hanya melalui URL `/admin/login`.
+- Setelah login admin, fitur tambah/edit/hapus data tersedia di area admin.
+
+## Menjalankan Project
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Buka aplikasi di:
+- `http://localhost:3000` untuk storefront.
+- `http://localhost:3000/admin/login` untuk admin login.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Tutorial Upload Gambar Produk (Admin)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Cara paling mudah (tanpa Cloudinary)
 
-## Learn More
+1. Login admin di `http://localhost:3000/admin/login`.
+2. Buka menu tambah/edit produk.
+3. Klik tombol **Upload dari Komputer**.
+4. Pilih file gambar dari laptop/PC (jpg/png/webp, maksimal 5MB).
+5. Tunggu proses upload selesai, preview gambar akan muncul.
+6. Klik **Simpan Produk**.
 
-To learn more about Next.js, take a look at the following resources:
+Catatan:
+- Jika gambar berhasil dipilih tapi preview tidak muncul, cek pesan error merah di bawah tombol upload.
+- Gambar lokal disimpan di folder `public/uploads`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Opsi Cloudinary (opsional)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Jika ingin pakai Cloudinary, isi env valid di `umkm-market/.env`:
 
-## Deploy on Vercel
+```env
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=nama_cloud_anda
+NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=nama_unsigned_preset_anda
+CLOUDINARY_API_KEY=api_key_anda
+CLOUDINARY_API_SECRET=api_secret_anda
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Lalu restart server `npm run dev`. Setelah itu tombol **Upload via Cloudinary** akan aktif.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Catatan Admin (opsional untuk local dev)
+
+Jika akun admin belum ada, buat akun lewat endpoint seed:
+
+```bash
+curl -X POST http://localhost:3000/api/seed/admin \
+  -H "Content-Type: application/json" \
+  -d "{\"name\":\"Admin PanenHub\",\"email\":\"admin@panenhub.com\",\"password\":\"password123\"}"
+```

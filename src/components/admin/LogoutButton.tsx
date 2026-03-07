@@ -27,7 +27,7 @@ export function LogoutButton({ isCollapsed }: LogoutButtonProps) {
             variant="ghost"
             onClick={handleLogout}
             className={cn(
-                "w-full justify-start gap-3 text-red-500 hover:text-red-600 hover:bg-red-50",
+                "w-full justify-start gap-3 text-red-500 hover:bg-red-500/10 hover:text-red-600",
                 isCollapsed && "px-0 justify-center"
             )}
         >

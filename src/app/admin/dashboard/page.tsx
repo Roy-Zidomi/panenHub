@@ -1,114 +1,126 @@
-export const dynamic = 'force-dynamic';
+﻿export const dynamic = "force-dynamic";
 
 import { getDashboardStats } from "@/services/analytics.service";
 import {
     Card,
     CardContent,
     CardHeader,
-    CardTitle
+    CardTitle,
 } from "@/components/ui/card";
 import {
-    DollarSign,
     Package,
     ShoppingBag,
-    TrendingUp,
-    Clock
+    DollarSign,
+    Users,
+    Clock3,
 } from "lucide-react";
 import { SalesChart } from "@/components/admin/SalesChart";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 export default async function AdminDashboardPage() {
     const stats = await getDashboardStats();
 
+    const metrics = [
+        {
+            title: "Total Products",
+            value: stats.productsCount.toLocaleString("id-ID"),
+            caption: "Produk aktif di marketplace",
+            icon: Package,
+            iconClass: "text-emerald-500",
+        },
+        {
+            title: "Total Orders",
+            value: stats.ordersCount.toLocaleString("id-ID"),
+            caption: "Total pesanan tercatat",
+            icon: ShoppingBag,
+            iconClass: "text-sky-500",
+        },
+        {
+            title: "Revenue",
+            value: `Rp ${stats.revenue.toLocaleString("id-ID")}`,
+            caption: "Akumulasi pesanan selesai",
+            icon: DollarSign,
+            iconClass: "text-amber-500",
+        },
+        {
+            title: "New Users",
+            value: `+${stats.newUsersCount.toLocaleString("id-ID")}`,
+            caption: `${stats.usersCount.toLocaleString("id-ID")} total user`,
+            icon: Users,
+            iconClass: "text-violet-500",
+        },
+    ];
+
     return (
-        <div className="space-y-8">
+        <div className="page-enter space-y-8">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">Dashboard Ringkasan</h1>
-                <p className="text-muted-foreground">
+                <h1 className="font-display text-3xl font-bold tracking-tight">My Dashboard</h1>
+                {/* <p className="text-muted-foreground">
                     Selamat datang kembali. Berikut adalah performa toko Anda hari ini.
-                </p>
+                </p> */}
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <Card className="border-none shadow-sm bg-emerald-50/50 dark:bg-emerald-950/20">
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-sm font-medium">Total Pendapatan</CardTitle>
-                        <DollarSign className="h-4 w-4 text-emerald-600" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">Rp {stats.revenue.toLocaleString("id-ID")}</div>
-                        <p className="text-xs text-muted-foreground">+20.1% dari bulan lalu</p>
-                    </CardContent>
-                </Card>
-
-                <Card className="border-none shadow-sm">
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-sm font-medium">Pesanan Masuk</CardTitle>
-                        <ShoppingBag className="h-4 w-4 text-blue-600" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">+{stats.ordersCount}</div>
-                        <p className="text-xs text-muted-foreground">Total pesanan di sistem</p>
-                    </CardContent>
-                </Card>
-
-                <Card className="border-none shadow-sm">
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-sm font-medium">Total Produk</CardTitle>
-                        <Package className="h-4 w-4 text-amber-600" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">{stats.productsCount}</div>
-                        <p className="text-xs text-muted-foreground">Item dalam inventaris</p>
-                    </CardContent>
-                </Card>
-
-                <Card className="border-none shadow-sm">
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-sm font-medium">Tingkat Penjualan</CardTitle>
-                        <TrendingUp className="h-4 w-4 text-purple-600" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">+12.5%</div>
-                        <p className="text-xs text-muted-foreground">Pertumbuhan minggu ini</p>
-                    </CardContent>
-                </Card>
+                {metrics.map((metric) => (
+                    <Card key={metric.title} className="rounded-xl border border-border/70 bg-card/70 shadow-md">
+                        <CardHeader className="flex flex-row items-center justify-between pb-2">
+                            <CardTitle className="text-sm font-medium">{metric.title}</CardTitle>
+                            <div className="rounded-lg bg-muted/70 p-2">
+                                <metric.icon className={cn("h-4 w-4", metric.iconClass)} />
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">{metric.value}</div>
+                            <p className="mt-1 text-xs text-muted-foreground">{metric.caption}</p>
+                        </CardContent>
+                    </Card>
+                ))}
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                <Card className="lg:col-span-4 border-none shadow-sm">
+            <div className="grid gap-4 lg:grid-cols-7">
+                <Card className="rounded-xl border border-border/70 bg-card/70 shadow-md lg:col-span-4">
                     <CardHeader>
                         <CardTitle>Grafik Penjualan (7 Hari Terakhir)</CardTitle>
+                        {/* <p className="text-sm text-muted-foreground">
+                            Menampilkan tren pendapatan harian dari transaksi selesai dan diproses.
+                        </p> */}
                     </CardHeader>
                     <CardContent className="pl-2">
                         <SalesChart data={stats.dailySales} />
                     </CardContent>
                 </Card>
 
-                <Card className="lg:col-span-3 border-none shadow-sm">
+                <Card className="rounded-xl border border-border/70 bg-card/70 shadow-md lg:col-span-3">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
-                            <Clock className="h-5 w-5 text-muted-foreground" /> Aktivitas Terbaru
+                            <Clock3 className="h-5 w-5 text-muted-foreground" /> Aktivitas Terbaru
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="space-y-6">
+                        <div className="space-y-3">
                             {stats.recentOrders.length === 0 ? (
-                                <p className="text-sm text-center text-muted-foreground py-8">
+                                <p className="py-8 text-center text-sm text-muted-foreground">
                                     Belum ada aktivitas pesanan.
                                 </p>
                             ) : (
-                                stats.recentOrders.map((order: any) => (
-                                    <div key={order.id} className="flex items-center">
-                                        <div className="space-y-1 flex-1">
+                                stats.recentOrders.map((order) => (
+                                    <div
+                                        key={order.id}
+                                        className="flex items-center rounded-lg border border-border/60 bg-muted/20 px-3 py-2"
+                                    >
+                                        <div className="flex-1 space-y-1">
                                             <p className="text-sm font-medium leading-none">
                                                 Pesanan baru dari {order.customerName}
                                             </p>
                                             <p className="text-xs text-muted-foreground">
-                                                {order.items.length} item • Rp {order.totalPrice.toLocaleString("id-ID")}
+                                                {order.items.length} item - Rp {order.totalPrice.toLocaleString("id-ID")}
                                             </p>
                                         </div>
-                                        <Badge variant={order.status === 'COMPLETED' ? 'default' : 'secondary'} className="text-[10px]">
+                                        <Badge
+                                            variant={order.status === "COMPLETED" ? "default" : "secondary"}
+                                            className="text-[10px]"
+                                        >
                                             {order.status}
                                         </Badge>
                                     </div>

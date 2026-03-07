@@ -30,8 +30,14 @@ import { Loader2, Save, X } from "lucide-react";
 const formSchema = z.object({
     name: z.string().min(1, "Nama produk wajib diisi"),
     description: z.string().optional(),
-    price: z.number().min(0, "Harga tidak boleh negatif"),
-    stock: z.number().min(0, "Stok tidak boleh negatif"),
+    price: z
+        .string()
+        .min(1, "Harga wajib diisi")
+        .regex(/^\d+$/, "Harga hanya boleh angka"),
+    stock: z
+        .string()
+        .min(1, "Stok wajib diisi")
+        .regex(/^\d+$/, "Stok hanya boleh angka"),
     categoryId: z.string().min(1, "Kategori wajib dipilih"),
     image: z.string().optional(),
     quality: z.string(),
@@ -51,29 +57,35 @@ export function ProductForm({ initialData, categories }: ProductFormProps) {
 
     const form = useForm<ProductFormValues>({
         resolver: zodResolver(formSchema),
-        defaultValues: initialData || {
-            name: "",
-            description: "",
-            price: 0,
-            stock: 0,
-            categoryId: "",
-            image: "",
-            quality: "Standard",
-            isFeatured: false,
+        defaultValues: {
+            name: initialData?.name ?? "",
+            description: initialData?.description ?? "",
+            price: initialData?.price !== undefined && initialData?.price !== null ? String(initialData.price) : "",
+            stock: initialData?.stock !== undefined && initialData?.stock !== null ? String(initialData.stock) : "",
+            categoryId: initialData?.categoryId ?? "",
+            image: initialData?.image ?? "",
+            quality: initialData?.quality ?? "Standard",
+            isFeatured: initialData?.isFeatured ?? false,
         },
     });
 
-    const onSubmit = async (data: any) => {
+    const onSubmit = async (data: ProductFormValues) => {
         try {
             setLoading(true);
             const url = initialData
                 ? `/api/admin/products/${initialData.id}`
                 : `/api/admin/products`;
 
+            const payload = {
+                ...data,
+                price: Number(data.price),
+                stock: Number(data.stock),
+            };
+
             const response = await fetch(url, {
                 method: initialData ? "PATCH" : "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
+                body: JSON.stringify(payload),
             });
 
             if (!response.ok) {
@@ -156,11 +168,20 @@ export function ProductForm({ initialData, categories }: ProductFormProps) {
                                 <FormLabel>Harga (Rp)</FormLabel>
                                 <FormControl>
                                     <Input
-                                        type="number"
+                                        type="text"
+                                        inputMode="numeric"
+                                        pattern="[0-9]*"
                                         disabled={loading}
-                                        placeholder="0"
-                                        {...field}
-                                        onChange={(e) => field.onChange(e.target.value === "" ? 0 : Number(e.target.value))}
+                                        placeholder="Contoh: 3000"
+                                        value={field.value ?? ""}
+                                        onChange={(e) => {
+                                            const digitsOnly = e.target.value.replace(/\D/g, "");
+                                            field.onChange(digitsOnly);
+                                        }}
+                                        onBlur={(e) => {
+                                            const normalized = e.target.value.replace(/^0+(?=\d)/, "");
+                                            field.onChange(normalized);
+                                        }}
                                     />
                                 </FormControl>
                                 <FormMessage />
@@ -175,11 +196,20 @@ export function ProductForm({ initialData, categories }: ProductFormProps) {
                                 <FormLabel>Stok</FormLabel>
                                 <FormControl>
                                     <Input
-                                        type="number"
+                                        type="text"
+                                        inputMode="numeric"
+                                        pattern="[0-9]*"
                                         disabled={loading}
-                                        placeholder="0"
-                                        {...field}
-                                        onChange={(e) => field.onChange(e.target.value === "" ? 0 : Number(e.target.value))}
+                                        placeholder="Contoh: 10"
+                                        value={field.value ?? ""}
+                                        onChange={(e) => {
+                                            const digitsOnly = e.target.value.replace(/\D/g, "");
+                                            field.onChange(digitsOnly);
+                                        }}
+                                        onBlur={(e) => {
+                                            const normalized = e.target.value.replace(/^0+(?=\d)/, "");
+                                            field.onChange(normalized);
+                                        }}
                                     />
                                 </FormControl>
                                 <FormMessage />

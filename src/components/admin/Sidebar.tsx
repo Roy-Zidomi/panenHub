@@ -8,7 +8,6 @@ import {
     ShoppingBag,
     Package,
     Settings,
-    LogOut,
     ChevronLeft,
     ChevronRight,
     Store
@@ -31,13 +30,13 @@ export function AdminSidebar() {
     return (
         <aside
             className={cn(
-                "flex flex-col border-r bg-muted/40 transition-all duration-300",
+                "flex flex-col border-r border-border/70 bg-card/60 backdrop-blur-md transition-all duration-300",
                 isCollapsed ? "w-16" : "w-64"
             )}
         >
-            <div className="flex h-14 items-center justify-between border-b px-4">
+            <div className="flex h-16 items-center justify-between border-b border-border/70 px-4">
                 {!isCollapsed && (
-                    <Link href="/" className="flex items-center gap-2 font-bold text-primary">
+                    <Link href="/" className="flex items-center gap-2 font-display text-lg font-bold text-foreground">
                         <Store className="h-5 w-5" />
                         <span>PanenHub</span>
                     </Link>
@@ -52,15 +51,15 @@ export function AdminSidebar() {
                 </Button>
             </div>
 
-            <nav className="flex-1 space-y-1 p-2">
+            <nav className="flex-1 space-y-1.5 p-2">
                 {menuItems.map((item) => (
                     <Link
                         key={item.href}
                         href={item.href}
                         className={cn(
-                            "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all hover:bg-muted",
+                            "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 hover:bg-accent/70",
                             pathname.startsWith(item.href)
-                                ? "bg-muted text-primary"
+                                ? "bg-primary text-primary-foreground shadow-sm"
                                 : "text-muted-foreground"
                         )}
                     >
@@ -70,7 +69,7 @@ export function AdminSidebar() {
                 ))}
             </nav>
 
-            <div className="p-2 border-t mt-auto">
+            <div className="mt-auto border-t border-border/70 p-2">
                 <LogoutButton isCollapsed={isCollapsed} />
             </div>
         </aside>
