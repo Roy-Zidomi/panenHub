@@ -6,11 +6,13 @@
     "clsx": "^2.1.1",
     "lucide-react": "^0.575.0",
     "next-cloudinary": "^6.17.5",
-    "prisma": "^7.4.1",
     "react-hook-form": "^7.71.2",
     "recharts": "^3.7.0",
     "tailwind-merge": "^3.5.0",
     "zod": "^4.3.6",
     "zustand": "^5.0.11"
+  },
+  "devDependencies": {
+    "prisma": "^7.4.1"
   }
 }
