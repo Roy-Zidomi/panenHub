@@ -16,8 +16,18 @@ import {
 } from "@/components/ui/select";
 import { AddToCartButton } from "@/components/cart/add-to-cart-button";
 
-const CATEGORY_OPTIONS = ["Semua", "Sayuran", "Buah", "Daging"] as const;
-type CategoryOption = (typeof CATEGORY_OPTIONS)[number];
+const CATEGORY_OPTIONS = [
+  { label: "Semua", keywords: [] },
+  { label: "Sayur", keywords: ["sayur"] },
+  { label: "Buah-buahan", keywords: ["buah"] },
+  { label: "Bumbu Dapur", keywords: ["bumbu", "rempah"] },
+  { label: "Daging", keywords: ["daging", "lauk", "protein", "ayam", "sapi", "ikan"] },
+  { label: "Telur", keywords: ["telur", "egg"] },
+  { label: "Sembako", keywords: ["sembako", "beras", "gula", "minyak"] },
+  { label: "Snack", keywords: ["snack", "cemilan", "makanan ringan", "minuman"] },
+] as const;
+
+type CategoryOption = (typeof CATEGORY_OPTIONS)[number]["label"];
 type SortOption = "latest" | "price-asc" | "price-desc";
 
 type ProductItem = {
@@ -42,10 +52,15 @@ interface ProductsCatalogProps {
 
 function mapCategoryParamToLabel(value?: string): CategoryOption {
   const normalized = (value || "").toLowerCase();
+  const matched = CATEGORY_OPTIONS.find((option) => {
+    if (option.label === "Semua") return false;
+    return (
+      normalized.includes(option.label.toLowerCase()) ||
+      option.keywords.some((keyword) => normalized.includes(keyword))
+    );
+  });
 
-  if (normalized.includes("sayur")) return "Sayuran";
-  if (normalized.includes("buah")) return "Buah";
-  if (normalized.includes("daging") || normalized.includes("lauk")) return "Daging";
+  if (matched) return matched.label;
   return "Semua";
 }
 
@@ -53,20 +68,9 @@ function isProductInCategory(product: ProductItem, selectedCategory: CategoryOpt
   if (selectedCategory === "Semua") return true;
 
   const source = `${product.category.name} ${product.category.slug}`.toLowerCase();
-
-  if (selectedCategory === "Sayuran") {
-    return source.includes("sayur");
-  }
-
-  if (selectedCategory === "Buah") {
-    return source.includes("buah");
-  }
-
-  if (selectedCategory === "Daging") {
-    return source.includes("daging") || source.includes("lauk") || source.includes("protein");
-  }
-
-  return true;
+  const selectedOption = CATEGORY_OPTIONS.find((option) => option.label === selectedCategory);
+  if (!selectedOption) return true;
+  return selectedOption.keywords.some((keyword) => source.includes(keyword));
 }
 
 export function ProductsCatalog({
@@ -148,12 +152,12 @@ export function ProductsCatalog({
 
         <div className="flex flex-wrap gap-2">
           {CATEGORY_OPTIONS.map((category) => {
-            const isActive = selectedCategory === category;
+            const isActive = selectedCategory === category.label;
             return (
               <button
-                key={category}
+                key={category.label}
                 type="button"
-                onClick={() => setSelectedCategory(category)}
+                onClick={() => setSelectedCategory(category.label)}
                 className={[
                   "rounded-full px-4 py-2 text-sm font-medium transition-all",
                   isActive
@@ -161,7 +165,7 @@ export function ProductsCatalog({
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200",
                 ].join(" ")}
               >
-                {category}
+                {category.label}
               </button>
             );
           })}

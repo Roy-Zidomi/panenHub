@@ -2,12 +2,13 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 const categories = [
-    { name: "Sayur Segar", slug: "sayur-segar" },
+    { name: "Sayur", slug: "sayur" },
     { name: "Buah-buahan", slug: "buah-buahan" },
-    { name: "Lauk Pauk", slug: "lauk-pauk" },
-    { name: "Sembako", slug: "sembako" },
     { name: "Bumbu Dapur", slug: "bumbu-dapur" },
-    { name: "Snack & Minuman", slug: "snack-minuman" },
+    { name: "Daging", slug: "daging" },
+    { name: "Telur", slug: "telur" },
+    { name: "Sembako", slug: "sembako" },
+    { name: "Snack", slug: "snack" },
 ];
 
 export async function GET() {
