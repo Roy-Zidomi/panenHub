@@ -30,16 +30,16 @@ export default async function EditProductPage({
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center gap-4">
+            <div className="reveal-up flex items-center gap-4">
                 <Link href="/admin/products">
                     <Button variant="outline" size="icon" className="h-8 w-8">
                         <ChevronLeft className="h-4 w-4" />
                     </Button>
                 </Link>
-                <h1 className="text-3xl font-bold tracking-tight">Edit Produk</h1>
+                <h1 className="font-display text-3xl font-bold tracking-tight">Edit Produk</h1>
             </div>
 
-            <Card className="border-none shadow-md bg-card">
+            <Card className="surface-panel reveal-up reveal-delay-1 rounded-2xl border">
                 <CardHeader>
                     <CardTitle>Informasi Produk</CardTitle>
                     <CardDescription>

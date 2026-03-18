@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Search, PackageSearch } from "lucide-react";
+import { ArrowDownUp, PackageSearch, Search } from "lucide-react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -54,10 +54,7 @@ function mapCategoryParamToLabel(value?: string): CategoryOption {
   const normalized = (value || "").toLowerCase();
   const matched = CATEGORY_OPTIONS.find((option) => {
     if (option.label === "Semua") return false;
-    return (
-      normalized.includes(option.label.toLowerCase()) ||
-      option.keywords.some((keyword) => normalized.includes(keyword))
-    );
+    return normalized.includes(option.label.toLowerCase()) || option.keywords.some((keyword) => normalized.includes(keyword));
   });
 
   if (matched) return matched.label;
@@ -78,9 +75,7 @@ export function ProductsCatalog({
   initialCategory,
   initialSearch,
 }: ProductsCatalogProps) {
-  const [selectedCategory, setSelectedCategory] = useState<CategoryOption>(
-    mapCategoryParamToLabel(initialCategory)
-  );
+  const [selectedCategory, setSelectedCategory] = useState<CategoryOption>(mapCategoryParamToLabel(initialCategory));
   const [searchTerm, setSearchTerm] = useState(initialSearch || "");
   const [sortBy, setSortBy] = useState<SortOption>("latest");
 
@@ -98,7 +93,6 @@ export function ProductsCatalog({
     const result = products.filter((product) => {
       const categoryMatch = isProductInCategory(product, selectedCategory);
       const searchMatch = product.name.toLowerCase().includes(keyword);
-
       return categoryMatch && searchMatch;
     });
 
@@ -109,25 +103,21 @@ export function ProductsCatalog({
     } else if (sortBy === "price-desc") {
       sorted.sort((a, b) => b.price - a.price);
     } else {
-      sorted.sort(
-        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
+      sorted.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     }
 
     return sorted;
   }, [products, selectedCategory, searchTerm, sortBy]);
 
   return (
-    <div className="container mx-auto px-4 sm:px-8 py-8 md:py-12">
+    <div className="container mx-auto px-4 py-8 sm:px-8 md:py-12">
       <div className="mb-8 flex flex-col gap-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Semua Produk</h1>
-          <p className="mt-1 text-muted-foreground">
-            Menampilkan {filteredProducts.length} produk segar
-          </p>
+        <div className="reveal-up">
+          <h1 className="font-display text-3xl font-bold tracking-tight">Semua Produk</h1>
+          <p className="mt-1 text-muted-foreground">Menampilkan {filteredProducts.length} produk segar</p>
         </div>
 
-        <div className="grid gap-4 lg:grid-cols-[1fr_auto]">
+        <div className="surface-panel reveal-up reveal-delay-1 grid gap-4 rounded-2xl p-4 lg:grid-cols-[1fr_auto] lg:p-5">
           <div className="relative">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -140,6 +130,7 @@ export function ProductsCatalog({
 
           <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortOption)}>
             <SelectTrigger className="w-full lg:w-[220px]">
+              <ArrowDownUp className="h-4 w-4 text-muted-foreground" />
               <SelectValue placeholder="Urutkan produk" />
             </SelectTrigger>
             <SelectContent>
@@ -150,7 +141,7 @@ export function ProductsCatalog({
           </Select>
         </div>
 
-        <div className="flex flex-wrap gap-2">
+        <div className="reveal-up reveal-delay-2 flex flex-wrap gap-2">
           {CATEGORY_OPTIONS.map((category) => {
             const isActive = selectedCategory === category.label;
             return (
@@ -159,10 +150,10 @@ export function ProductsCatalog({
                 type="button"
                 onClick={() => setSelectedCategory(category.label)}
                 className={[
-                  "rounded-full px-4 py-2 text-sm font-medium transition-all",
+                  "rounded-full border px-4 py-2 text-sm font-medium transition-all duration-200",
                   isActive
-                    ? "bg-black text-white shadow-sm"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200",
+                    ? "border-primary bg-primary text-primary-foreground shadow"
+                    : "border-border/70 bg-card/70 text-muted-foreground hover:border-border hover:text-foreground",
                 ].join(" ")}
               >
                 {category.label}
@@ -173,24 +164,28 @@ export function ProductsCatalog({
       </div>
 
       {filteredProducts.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed bg-muted/20 py-24 text-center">
+        <div className="surface-panel flex flex-col items-center justify-center rounded-xl border border-dashed py-24 text-center">
           <PackageSearch className="mb-3 h-10 w-10 text-muted-foreground" />
           <h2 className="text-xl font-semibold">Produk tidak ditemukan</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Coba ubah kata kunci pencarian atau pilih kategori lain.
-          </p>
+          <p className="mt-1 text-sm text-muted-foreground">Coba ubah kata kunci pencarian atau pilih kategori lain.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 md:gap-6">
-          {filteredProducts.map((product) => (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-4">
+          {filteredProducts.map((product, index) => (
             <Card
               key={product.id}
-              className="group flex flex-col overflow-hidden border bg-card/80 shadow-sm transition-all duration-300 hover:scale-[1.01] hover:shadow-lg"
+              className={[
+                "surface-panel interactive-lift reveal-up group flex flex-col overflow-hidden rounded-2xl border",
+                index % 4 === 0
+                  ? "reveal-delay-1"
+                  : index % 4 === 1
+                    ? "reveal-delay-2"
+                    : index % 4 === 2
+                      ? "reveal-delay-3"
+                      : "reveal-delay-4",
+              ].join(" ")}
             >
-              <Link
-                href={`/products/${product.id}`}
-                className="relative block aspect-square overflow-hidden bg-muted"
-              >
+              <Link href={`/products/${product.id}`} className="relative block aspect-square overflow-hidden bg-muted">
                 {product.image ? (
                   <Image
                     src={product.image}
@@ -204,9 +199,7 @@ export function ProductsCatalog({
                   </div>
                 )}
                 {product.quality === "Premium" && (
-                  <Badge className="absolute right-2 top-2 border-none bg-amber-500 shadow-sm hover:bg-amber-600">
-                    Premium
-                  </Badge>
+                  <Badge className="absolute right-2 top-2 border-none bg-amber-500 shadow-sm hover:bg-amber-600">Premium</Badge>
                 )}
               </Link>
 
@@ -215,9 +208,7 @@ export function ProductsCatalog({
                 <Link href={`/products/${product.id}`} className="hover:underline">
                   <h3 className="line-clamp-2 text-base font-semibold leading-tight">{product.name}</h3>
                 </Link>
-                <div className="mt-3 text-xl font-bold text-primary">
-                  Rp {idrFormatter.format(product.price)}
-                </div>
+                <div className="mt-3 text-xl font-bold text-primary">Rp {idrFormatter.format(product.price)}</div>
               </CardContent>
 
               <CardFooter className="p-4 pt-0">

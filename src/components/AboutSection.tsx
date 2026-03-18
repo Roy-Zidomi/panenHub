@@ -22,26 +22,28 @@ export function AboutSection() {
   return (
     <section
       id="about"
-      className="scroll-mt-24 bg-gradient-to-b from-background to-muted/30 py-16 md:py-20"
+      className="scroll-mt-24 py-8 md:py-10"
     >
       <div className="container mx-auto px-4 sm:px-8">
-        <div className="mx-auto max-w-3xl text-center">
-          {/* <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">About</p> */}
+        <div className="reveal-up mx-auto max-w-3xl text-center">
           <h2 className="mt-3 text-3xl font-bold tracking-tight md:text-4xl">
-            About 
+            Tentang PanenHub
           </h2>
           <p className="mt-4 text-base leading-relaxed text-muted-foreground md:text-lg">
-          Belanja produk lokal makin mudah, ekonomi petani makin meroket.
+            Belanja produk lokal makin mudah, ekonomi petani makin tumbuh.
           </p>
         </div>
 
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {aboutPoints.map((point) => {
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {aboutPoints.map((point, index) => {
             const Icon = point.icon;
             return (
               <article
                 key={point.title}
-                className="rounded-2xl border bg-card/70 p-6 shadow-sm backdrop-blur transition-transform duration-200 hover:-translate-y-1"
+                className={[
+                  "surface-panel interactive-lift reveal-up rounded-2xl p-6",
+                  index === 0 ? "reveal-delay-1" : index === 1 ? "reveal-delay-2" : "reveal-delay-3",
+                ].join(" ")}
               >
                 <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
                   <Icon className="h-5 w-5" />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCartStore } from "@/hooks/use-cart";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
@@ -15,6 +15,13 @@ interface ProductItem {
 export function AddToCartButton({ product }: { product: ProductItem }) {
     const cart = useCartStore();
     const [added, setAdded] = useState(false);
+    const [timeoutId, setTimeoutId] = useState<ReturnType<typeof setTimeout> | null>(null);
+
+    useEffect(() => {
+        return () => {
+            if (timeoutId) clearTimeout(timeoutId);
+        };
+    }, [timeoutId]);
 
     if (product.stock <= 0) {
         return (
@@ -34,12 +41,13 @@ export function AddToCartButton({ product }: { product: ProductItem }) {
             stock: product.stock
         });
         setAdded(true);
-        setTimeout(() => setAdded(false), 2000);
+        if (timeoutId) clearTimeout(timeoutId);
+        setTimeoutId(setTimeout(() => setAdded(false), 1600));
     };
 
     return (
         <Button
-            className="w-full gap-2 transition-all"
+            className="w-full gap-2 transition-all duration-200"
             size="sm"
             onClick={handleAdd}
             variant={added ? "secondary" : "default"}

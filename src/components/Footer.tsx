@@ -2,14 +2,18 @@ import Link from "next/link";
 
 export function Footer() {
     return (
-        <footer className="border-t border-border/70 bg-background/80">
+        <footer className="relative mt-16 border-t border-border/70 bg-background/80">
+            <div className="pointer-events-none absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
             <div className="container mx-auto px-4 sm:px-8 py-12">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                    <div className="space-y-4">
-                        <h3 className="font-display text-xl font-bold text-foreground">PanenHub</h3>
-                        <p className="text-sm text-muted-foreground w-3/4">
+                    <div className="space-y-4 md:col-span-2">
+                        <h3 className="font-display text-2xl font-bold tracking-tight text-foreground">PanenHub</h3>
+                        <p className="max-w-md text-sm text-muted-foreground">
                             Marketplace makanan UMKM terpercaya, menghubungkan penjual lokal dengan pembeli di seluruh Indonesia.
                         </p>
+                        <div className="inline-flex items-center rounded-full border border-border/70 bg-card/70 px-3 py-1 text-xs text-muted-foreground">
+                            Belanja cerdas, dukung produsen lokal
+                        </div>
                     </div>
                     <div>
                         <h4 className="font-semibold mb-4">Tautan</h4>
@@ -28,16 +32,8 @@ export function Footer() {
                             <li><Link href="/products?category=telur" className="hover:text-primary transition-colors">Telur</Link></li>
                         </ul>
                     </div>
-                    <div>
-                        <h4 className="font-semibold mb-4">Kontak</h4>
-                        <ul className="space-y-2 text-sm text-muted-foreground">
-                            <li>Email: hello@panenhub.com</li>
-                            <li>WhatsApp: +62 812 3456 7890</li>
-                            <li>Alamat: Jakarta, Indonesia</li>
-                        </ul>
-                    </div>
                 </div>
-                <div className="mt-12 pt-8 border-t text-center text-sm text-muted-foreground">
+                <div className="mt-12 border-t pt-8 text-center text-sm text-muted-foreground">
                     <p>&copy; {new Date().getFullYear()} PanenHub. All rights reserved.</p>
                 </div>
             </div>

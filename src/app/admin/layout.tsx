@@ -1,25 +1,40 @@
-import { AdminSidebar } from "@/components/admin/Sidebar";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { AdminLayoutShell } from "@/components/admin/AdminLayoutShell";
+import { cookies } from "next/headers";
+import * as jose from "jose";
 
-export default function AdminLayout({
+type AdminAccount = {
+    name: string;
+    role: string;
+};
+
+async function getAdminAccountFromCookie(): Promise<AdminAccount | undefined> {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("admin-token")?.value;
+    if (!token) return undefined;
+
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET || "fallback-secret-for-dev");
+
+    try {
+        const { payload } = await jose.jwtVerify(token, secret);
+
+        const nameFromToken = typeof payload.name === "string" ? payload.name.trim() : "";
+        const emailFromToken = typeof payload.email === "string" ? payload.email : "";
+        const roleFromToken = typeof payload.role === "string" ? payload.role : "ADMIN";
+
+        const name = nameFromToken || emailFromToken.split("@")[0] || "Admin User";
+        const role = roleFromToken.charAt(0) + roleFromToken.slice(1).toLowerCase();
+
+        return { name, role };
+    } catch {
+        return undefined;
+    }
+}
+
+export default async function AdminLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
-    return (
-        <div className="flex min-h-screen bg-background">
-            <AdminSidebar />
-            <main className="flex-1 flex flex-col min-w-0">
-                <header className="surface-glass flex h-[64px] items-center justify-between gap-4 border-b px-6">
-                    <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.24em]">
-                        Admin Panel
-                    </h2>
-                    <ThemeToggle />
-                </header>
-                <div className="page-enter flex-1 overflow-auto p-4 md:p-8">
-                    {children}
-                </div>
-            </main>
-        </div>
-    );
+    const account = await getAdminAccountFromCookie();
+    return <AdminLayoutShell account={account}>{children}</AdminLayoutShell>;
 }
