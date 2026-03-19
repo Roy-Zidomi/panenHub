@@ -3,11 +3,32 @@
 import { getOrderById } from "@/services/order.service";
 import { notFound } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChevronLeft, Package, User, MapPin, Phone, Calendar } from "lucide-react";
+import { ChevronLeft, Package, User, MapPin, Phone, Calendar, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { StatusSelect } from "@/components/admin/StatusSelect";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+
+function extractLocationAndNotes(rawNotes: string | null | undefined) {
+  if (!rawNotes) {
+    return {
+      locationUrl: null,
+      customerNotes: null,
+    };
+  }
+
+  const locationMatch = rawNotes.match(/\[LOKASI_MAPS\]\s*(https?:\/\/\S+)/i);
+  const locationUrl = locationMatch?.[1] ?? null;
+
+  const customerNotes = rawNotes
+    .replace(/\[LOKASI_MAPS\]\s*https?:\/\/\S+/gi, "")
+    .trim();
+
+  return {
+    locationUrl,
+    customerNotes: customerNotes.length > 0 ? customerNotes : null,
+  };
+}
 
 export default async function OrderDetailPage({
   params,
@@ -20,6 +41,7 @@ export default async function OrderDetailPage({
   if (!order) {
     notFound();
   }
+  const { locationUrl, customerNotes } = extractLocationAndNotes(order.notes);
 
   return (
     <div className="space-y-6">
@@ -120,14 +142,31 @@ export default async function OrderDetailPage({
             </CardContent>
           </Card>
 
-          {order.notes && (
+          {locationUrl && (
+            <Card className="surface-panel reveal-up reveal-delay-3 rounded-2xl border">
+              <CardHeader>
+                <CardTitle className="text-sm font-bold">Titik Lokasi Pengantaran</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <a href={locationUrl} target="_blank" rel="noreferrer">
+                  <Button variant="outline" className="w-full justify-between gap-2">
+                    <span className="truncate text-left">Buka Lokasi di Google Maps</span>
+                    <ExternalLink className="h-4 w-4 shrink-0" />
+                  </Button>
+                </a>
+                <p className="mt-2 break-all text-[11px] text-muted-foreground">{locationUrl}</p>
+              </CardContent>
+            </Card>
+          )}
+
+          {customerNotes && (
             <Card className="surface-panel reveal-up reveal-delay-3 rounded-2xl border">
               <CardHeader>
                 <CardTitle className="text-sm font-bold">Catatan Pembeli</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="rounded-md bg-muted/40 p-3 text-sm italic text-muted-foreground">
-                  &quot;{order.notes}&quot;
+                  &quot;{customerNotes}&quot;
                 </p>
               </CardContent>
             </Card>

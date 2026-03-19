@@ -9,6 +9,7 @@ import { LogoutButton } from "@/components/admin/LogoutButton";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ThemeModeMenuItem } from "@/components/ThemeModeMenuItem";
+import { AdminNotifications } from "@/components/admin/AdminNotifications";
 
 export function AdminLayoutShell({
   children,
@@ -136,6 +137,9 @@ export function AdminLayoutShell({
             <h2 className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
               Admin Panel
             </h2>
+          </div>
+          <div className="ml-auto flex items-center gap-2">
+            <AdminNotifications />
           </div>
         </header>
         <div className="page-enter relative flex-1 overflow-auto p-4 md:p-8">

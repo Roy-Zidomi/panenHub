@@ -47,6 +47,8 @@ type AppSettings = {
     newOrder: boolean;
     orderStatus: boolean;
     dailySummary: boolean;
+    lowStock: boolean;
+    lowStockThreshold: number;
   };
   security: {
     authTokenVersion: number;
@@ -670,6 +672,44 @@ export function SettingsClient() {
               />
               <span className="text-sm">Ringkasan harian</span>
             </label>
+            <label className="flex items-center gap-3 rounded-xl border border-border/70 bg-card/60 px-3 py-2">
+              <Checkbox
+                checked={settings.notifications.lowStock}
+                onCheckedChange={(checked) =>
+                  setSettings((prev) =>
+                    prev
+                      ? { ...prev, notifications: { ...prev.notifications, lowStock: checked === true } }
+                      : prev
+                  )
+                }
+              />
+              <span className="text-sm">Notifikasi stok menipis</span>
+            </label>
+            <div className="space-y-2">
+              <Label>Ambang Batas Stok Menipis</Label>
+              <Input
+                type="number"
+                min={1}
+                max={100}
+                value={settings.notifications.lowStockThreshold}
+                onChange={(e) =>
+                  setSettings((prev) =>
+                    prev
+                      ? {
+                          ...prev,
+                          notifications: {
+                            ...prev.notifications,
+                            lowStockThreshold: Math.min(100, Math.max(1, Number(e.target.value || 1))),
+                          },
+                        }
+                      : prev
+                  )
+                }
+              />
+              <p className="text-xs text-muted-foreground">
+                Produk dengan stok kurang dari atau sama dengan nilai ini akan memicu notifikasi.
+              </p>
+            </div>
             <Button
               className="gap-2"
               onClick={() => saveSettingsPatch("notifications", { notifications: settings.notifications })}

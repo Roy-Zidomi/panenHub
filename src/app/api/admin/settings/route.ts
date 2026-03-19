@@ -55,6 +55,8 @@ const settingsPatchSchema = z.object({
       newOrder: z.boolean().optional(),
       orderStatus: z.boolean().optional(),
       dailySummary: z.boolean().optional(),
+      lowStock: z.boolean().optional(),
+      lowStockThreshold: z.coerce.number().int().min(1).max(100).optional(),
     })
     .optional(),
 });

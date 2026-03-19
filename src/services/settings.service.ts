@@ -43,6 +43,8 @@ const appSettingsSchema = z.object({
     newOrder: z.boolean(),
     orderStatus: z.boolean(),
     dailySummary: z.boolean(),
+    lowStock: z.boolean(),
+    lowStockThreshold: z.number().int().min(1).max(100),
   }),
   security: z.object({
     authTokenVersion: z.number().int().min(1),
@@ -94,6 +96,8 @@ export const defaultAppSettings: AppSettings = {
     newOrder: true,
     orderStatus: true,
     dailySummary: false,
+    lowStock: true,
+    lowStockThreshold: 5,
   },
   security: {
     authTokenVersion: 1,
